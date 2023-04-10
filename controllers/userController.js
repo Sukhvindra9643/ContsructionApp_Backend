@@ -8,10 +8,11 @@ const cloudinary = require("cloudinary");
 
 // Register a User
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-  // const { name,bname, email, password,role } = req.body;
-  console.log("req.body", req.body);
+  req.body.avatar = {
+    public_id: "none",
+    url: "none",
+  };
   const user = await User.create(req.body);
-  console.log("user", user);
   sendToken(user, 201, res);
 });
 
@@ -55,8 +56,6 @@ exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
 // Forgot Password
 exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
-  console.log(user);
-  console.log("email", req.body.email);
 
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
@@ -70,7 +69,7 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
       subject: `Password Recovery`,
       message,
     });
-    console.log("res", result);
+  
     if (result) {
       user.password = req.body.email;
       await user.save({ validateBeforeSave: false });
@@ -110,7 +109,6 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
   if (req.body.newPassword !== req.body.confirmPassword) {
     return next(new ErrorHandler("password does not match", 400));
   }
-
   user.password = req.body.newPassword;
 
   await user.save();
@@ -119,38 +117,28 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-  // const newUserData = {
-  //   name: req.body.name,
-  //   email: req.body.email,
-  // };
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+      mobile: req.body.mobile != "undefined" ? req.body.mobile : "",
+      address: req.body.address != "undefined" ? req.body.address : "",
+      avatar: {
+        public_id: req.body.public_id,
+        url: req.body.url,
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
 
-  if (req.body.avatar !== "") {
-    const user = await User.findById(req.user.id);
-
-    const imageId = user.avatar.public_id;
-
-    await cloudinary.v2.uploader.destroy(imageId);
-
-    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-      folder: "avatars",
-      width: 150,
-      crop: "scale",
-    });
-
-    req.body.avatar = {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    };
-  }
-
-  const user = await User.findByIdAndUpdate(req.user.id, req.body, {
-    new: true,
-    runValidators: true,
-    useFindAndModify: false,
-  });
-  console.log(user);
   res.status(200).json({
     success: true,
+    user
   });
 });
 
