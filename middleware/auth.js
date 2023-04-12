@@ -17,6 +17,21 @@ exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
   next();
 });
 
+exports.authorizeSellerRoles = (roles) => {
+  return (req, res, next) => {
+    if (req.user.role !== "seller") {
+      console.log("error")
+      return next(
+        new ErrorHandler(
+          `Role: ${req.user.role} is not allowed to access this resource `,
+          403
+        )
+      );
+    }
+
+    next();
+  };
+};
 exports.authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -30,4 +45,4 @@ exports.authorizeRoles = (...roles) => {
 
     next();
   };
-};
+}
