@@ -18,9 +18,11 @@ app.use(fileUpload());
 // Route imports
 const user = require("./routes/userRoute");
 const service = require("./routes/serviceRoute");
+const category = require("./routes/categoryRoute");
 
 app.use("/api/v1",user);
 app.use("/api/v1",service);
+app.use("/api/v1",category);
 
 
 // app.use(express.static(path.join(__dirname,"../frontend/build")));

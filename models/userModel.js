@@ -31,9 +31,11 @@ const userSchema = new mongoose.Schema({
   avatar: {
     public_id: {
       type: String,
+      default : "none"
     },
     url: {
       type: String,
+      default : "none"
     },
   },
   mobile:{

@@ -15,15 +15,23 @@ const serviceSchema = new mongoose.Schema({
   },
   images: [
     {
-      public_id: {
+      public_id: [{
         type: String,
-      },
-      url: {
+      }],
+      url: [{
         type: String,
-      },
+      }],
     },
   ],
-  description: {
+  category:{
+    type:String,
+    required : true,
+  },
+  subcategory:{
+    type:String,
+    required : true,
+  },
+  desc: {
     type: String,
     required: [true, "Please Enter Your Service Description"],
   },

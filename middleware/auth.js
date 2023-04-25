@@ -20,7 +20,6 @@ exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
 exports.authorizeSellerRoles = (roles) => {
   return (req, res, next) => {
     if (req.user.role !== "seller") {
-      console.log("error")
       return next(
         new ErrorHandler(
           `Role: ${req.user.role} is not allowed to access this resource `,
