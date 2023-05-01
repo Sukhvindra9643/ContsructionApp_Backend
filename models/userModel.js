@@ -31,25 +31,26 @@ const userSchema = new mongoose.Schema({
   avatar: {
     public_id: {
       type: String,
-      default : "none"
+      default: "none"
     },
     url: {
       type: String,
-      default : "none"
+      default: "https://res.cloudinary.com/dk0o7tdks/image/upload/v1681134668/images/user_cl1ttq.jpg"
     },
   },
-  mobile:{
-    type:String,
-    minLength:[10,"Mobile no. should be 10 digit"],
-    maxLength:[10,"Mobile no. should be 10 digit"],
+  mobile: {
+    type: String,
+    minLength: [10, "Mobile no. should be 10 digit"],
+    maxLength: [10, "Mobile no. should be 10 digit"],
   },
-  address:{
-    type:String
+  address: {
+    type: String
   },
   role: {
     type: String,
     required: true,
   },
+  shopInfo: [],
   createdAt: {
     type: Date,
     default: Date.now,

@@ -11,6 +11,7 @@ const {
   getAllUsers,
   deleteUser,
   getAllSellers,
+  addServices
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -21,14 +22,16 @@ router.route("/me").get(isAuthenticatedUser, getUserDetails);
 router.route("/password/update").put(isAuthenticatedUser, updatePassword);
 router.route("/password/forgot").post(forgotPassword);
 router.route("/me/update").put(isAuthenticatedUser, updateProfile);
+router.route("/allsellers").get(getAllSellers);
+router.route("/addservices").post(isAuthenticatedUser,addServices);
 
 // Admin Routes
 router
   .route("/admin/users")
   .get(isAuthenticatedUser, authorizeRoles("admin"), getAllUsers);
-router
-  .route("/admin/allsellers")
-  .get(isAuthenticatedUser, authorizeRoles("admin"), getAllSellers);
+// router
+//   .route("/admin/allsellers")
+//   .get(isAuthenticatedUser, authorizeRoles("admin"), getAllSellers);
 router
   .route("/admin/user/:id")
   .delete(isAuthenticatedUser, authorizeRoles("admin"), deleteUser);

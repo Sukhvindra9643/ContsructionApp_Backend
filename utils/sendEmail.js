@@ -1,7 +1,6 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (options) => {
-  console.log(process.env.SMTP_PASSWORD);
 
   var transporter = nodemailer.createTransport({
     host: "smtp.ethereal.email",

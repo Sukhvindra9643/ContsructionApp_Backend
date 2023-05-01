@@ -5,7 +5,7 @@
   "main": "backend/index.js",
   "scripts": {
     "start":"node backend/index.js",
-    "dev":"nodemon --delay 500ms backend/index.js"
+    "dev":"nodemon --delay 500ms ./index.js"
   },
   "author": "",
   "license": "ISC",

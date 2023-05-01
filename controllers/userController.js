@@ -11,10 +11,15 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   req.body.bname = req.body.bname ? req.body.bname : req.body.name;
   req.body.mobile = "XXXXXXXXXX";
   req.body.address = "";
+ req.body.shopInfo = req.body.shopInfo.split(",")
 
   const user = await User.create(req.body);
 
-  sendToken(user, 201, res);
+  res.status(200).json({
+    success: true,
+    message: "Registered Successfully",
+    user
+  });
 });
 
 // Login User
@@ -57,7 +62,7 @@ exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
 // Forgot Password
 exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
-
+  console.log(user)
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
@@ -119,13 +124,17 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
+  req.body.mobile = req.body.mobile != "" ? req.body.mobile : ""
+  req.body.address = req.body.address != "" ? req.body.address : ""
+  
+  
   const user = await User.findByIdAndUpdate(
     req.user.id,
     {
       name: req.body.name,
       email: req.body.email,
-      mobile: req.body.mobile != "undefined" ? req.body.mobile : "",
-      address: req.body.address != "undefined" ? req.body.address : "",
+      mobile: req.body.mobile,
+      address: req.body.address,
       avatar: {
         public_id: req.body.public_id,
         url: req.body.url,
@@ -154,8 +163,9 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
   });
 });
 exports.getAllSellers = catchAsyncErrors(async (req, res, next) => {
-  const sellers = await User.find({role: 'seller'});
-
+  const {shopInfo} = req.query;
+  const sellers = await User.find({'shopInfo':shopInfo})
+  
   res.status(200).json({
     success: true,
     sellers,
@@ -182,5 +192,24 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "User Deleted Successfully",
+  });
+});
+
+exports.addServices = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  let add = user.shopInfo;
+
+  for(let i=0;i<req.body.length;i++){
+    if(user.shopInfo[i] !== req.body[i].value){
+      add.push(req.body[i].value)
+    }
+  }
+
+  user.shopInfo = add;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    user
   });
 });
