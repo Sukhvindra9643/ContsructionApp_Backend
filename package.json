@@ -4,8 +4,8 @@
   "description": "",
   "main": "backend/index.js",
   "scripts": {
-    "start":"node backend/index.js",
-    "dev":"nodemon --delay 500ms ./index.js"
+    "start": "node backend/index.js",
+    "dev": "nodemon --delay 500ms ./index.js"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +21,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.2",
     "nodemailer": "^6.8.0",
+    "stripe": "^12.4.0",
     "validator": "^13.7.0"
   }
 }

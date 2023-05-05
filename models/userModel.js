@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   shopInfo: [],
+  wallet:{
+    type:Number,
+    default:0
+  },
   createdAt: {
     type: Date,
     default: Date.now,
