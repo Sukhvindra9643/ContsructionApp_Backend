@@ -125,14 +125,11 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-  console.log(req.body)
   req.body.mobile = req.body.mobile != "" ? req.body.mobile : ""
   req.body.address = req.body.address != "" ? req.body.address : ""
   
   const u = await User.findById(req.user.id);
 
-
-  console.log(wallet)
   const user = await User.findByIdAndUpdate(
     req.user.id,
     {
@@ -144,7 +141,7 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
         public_id: req.body.public_id ? req.body.public_id : u.avatar.public_id,
         url: req.body.url ? req.body.url : u.avatar.url,
       },
-      wallet: u.wallet + req.body.wallet,
+      wallet: u.wallet + parseInt(req.body.wallet),
     },
     {
       new: true,
@@ -152,7 +149,7 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
       useFindAndModify: false,
     }
   );
-  
+
   res.status(200).json({
     success: true,
     user
