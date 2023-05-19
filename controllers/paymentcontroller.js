@@ -30,7 +30,7 @@ exports.processPayment = catchAsyncErrors(async (req, res, next) => {
 
 exports.paymentVerify = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user.id);
-  console.log("user",user);
+
   const sig = req.headers['stripe-signature'];
   let event;
   try {

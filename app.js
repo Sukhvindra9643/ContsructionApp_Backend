@@ -4,8 +4,8 @@ const errorMiddleware = require("./middleware/error")
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
-const Stripe = require("stripe");
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
+
 
 // config
 require("dotenv").config({ path: "./config/config.env" });
@@ -21,11 +21,16 @@ const user = require("./routes/userRoute");
 const service = require("./routes/serviceRoute");
 const category = require("./routes/categoryRoute");
 const payment = require("./routes/paymentRoute");
-
+const materialQuery = require("./routes/materialQueryRoutes");
+const materialContact = require("./routes/materialContactRoute");
+const ServiceQuery = require("./routes/serviceQueryRoutes");
 app.use("/api/v1",user);
 app.use("/api/v1",service);
 app.use("/api/v1",category);
 app.use("/api/v1",payment);
+app.use("/api/v1",materialQuery);
+app.use("/api/v1",materialContact);
+app.use("/api/v1",ServiceQuery);
 
 // Middleware for error
 app.use(errorMiddleware);

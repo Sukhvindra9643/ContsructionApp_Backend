@@ -3,7 +3,6 @@ const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const User = require("../models/userModel");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
-const crypto = require("crypto");
 const cloudinary = require("cloudinary");
 
 // Register a User
@@ -11,20 +10,19 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   req.body.bname = req.body.bname ? req.body.bname : req.body.name;
   req.body.mobile = "XXXXXXXXXX";
   req.body.address = "";
- req.body.shopInfo = req.body.shopInfo.split(",")
+  req.body.shopInfo = req.body.shopInfo.split(",");
 
   const user = await User.create(req.body);
 
   res.status(200).json({
     success: true,
     message: "Registered Successfully",
-    user
+    user,
   });
 });
 
 // Login User
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
-  console
   const { email, password } = req.body;
 
   // checking if user has given password and email both
@@ -40,14 +38,50 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   }
 
   const isPasswordMatched = await user.comparePassword(password);
-
   if (!isPasswordMatched) {
     return next(new ErrorHandler("Invalid email or password", 401));
   }
 
-  sendToken(user, 200, res);
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  console.log(otp);
+  user.otp = otp;
+  await user.save({ validateBeforeSave: false });
+  const message = `username: ${req.body.email} \notp:${otp} \n\nIf you have not requested this email then, please ignore it.\nPlease change your password after login.`;
+
+  try {
+    const result = await sendEmail({
+      email: user.email,
+      subject: `Otp Verification`,
+      message,
+    });
+
+    if (result) {
+      res.status(200).json({
+        success: true,
+      });
+    }
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
 });
 
+exports.Verify = catchAsyncErrors(async (req, res, next) => {
+  const { email, otp } = req.body;
+
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    return next(new ErrorHandler("Invalid Email & Password", 400));
+  }
+
+  if (user.otp != otp) {
+    return next(new ErrorHandler("Invalid Otp", 400));
+  }
+
+  if (user.otp == otp) {
+    sendToken(user, 200, res);
+  }
+});
 // Logout User
 exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
   res.cookie("token", null, {
@@ -63,12 +97,12 @@ exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
 // Forgot Password
 exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
-  console.log(user)
+
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
-
-  const message = `username: ${req.body.email} \nnewpassword:${req.body.email} \n\nIf you have not requested this email then, please ignore it.\nPlease change your password after login.`;
+  const pass = Math.floor(100000 + Math.random() * 900000);
+  const message = `username: ${req.body.email} \nnewpassword:${pass} \n\nIf you have not requested this email then, please ignore it.\nPlease change your password after login.`;
 
   try {
     const result = await sendEmail({
@@ -76,10 +110,11 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
       subject: `Password Recovery`,
       message,
     });
-  
+
     if (result) {
-      user.password = req.body.email;
+      user.password = pass;
       await user.save({ validateBeforeSave: false });
+
       res.status(200).json({
         success: true,
         message: `New password has been sent to this email ${user.email}`,
@@ -111,12 +146,10 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
   const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
 
   if (!isPasswordMatched) {
+    console.log(isPasswordMatched);
     return next(new ErrorHandler("Old password is incorrect", 400));
   }
 
-  if (req.body.newPassword !== req.body.confirmPassword) {
-    return next(new ErrorHandler("password does not match", 400));
-  }
   user.password = req.body.newPassword;
 
   await user.save();
@@ -125,34 +158,18 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-  req.body.mobile = req.body.mobile != "" ? req.body.mobile : ""
-  req.body.address = req.body.address != "" ? req.body.address : ""
-  
-  const u = await User.findById(req.user.id);
+  req.body.mobile = req.body.mobile != "" ? req.body.mobile : "";
+  req.body.address = req.body.address != "" ? req.body.address : "";
 
-  const user = await User.findByIdAndUpdate(
-    req.user.id,
-    {
-      name: req.body.name ? req.body.name : u.name,
-      email: req.body.email ? req.body.email : u.email,
-      mobile: req.body.mobile ? req.body.mobile : u.mobile,
-      address: req.body.address ? req.body.address : u.address,
-      avatar: {
-        public_id: req.body.public_id ? req.body.public_id : u.avatar.public_id,
-        url: req.body.url ? req.body.url : u.avatar.url,
-      },
-      wallet: u.wallet + parseInt(req.body.wallet),
-    },
-    {
-      new: true,
-      runValidators: true,
-      useFindAndModify: false,
-    }
-  );
+  const user = await User.findByIdAndUpdate(req.user.id, req.body, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
 
   res.status(200).json({
     success: true,
-    user
+    user,
   });
 });
 
@@ -166,15 +183,14 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
   });
 });
 exports.getAllSellers = catchAsyncErrors(async (req, res, next) => {
-  const {shopInfo} = req.query;
-  const sellers = await User.find({'shopInfo':shopInfo})
-  
+  const { shopInfo } = req.query;
+  const sellers = await User.find({ shopInfo: shopInfo });
+
   res.status(200).json({
     success: true,
     sellers,
   });
 });
-
 
 // Delete User --Admin
 exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
@@ -202,9 +218,9 @@ exports.addServices = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user.id);
   let add = user.shopInfo;
 
-  for(let i=0;i<req.body.length;i++){
-    if(user.shopInfo[i] !== req.body[i].value){
-      add.push(req.body[i].value)
+  for (let i = 0; i < req.body.length; i++) {
+    if (user.shopInfo[i] !== req.body[i].value) {
+      add.push(req.body[i].value);
     }
   }
 
@@ -213,6 +229,6 @@ exports.addServices = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    user
+    user,
   });
 });

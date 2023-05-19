@@ -5,10 +5,6 @@ const serviceSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please Enter Your Service Name"],
   },
-  bname: {
-    type: String,
-    required: [true, "Please Enter Your Business Name"],
-  },
   price: {
     type: Number,
     required: [true, "Please Enter Your Service Price"],
@@ -23,25 +19,14 @@ const serviceSchema = new mongoose.Schema({
       }],
     },
   ],
-  category:{
-    type:String,
-    required : true,
-  },
-  subcategory:{
-    type:String,
-    required : true,
-  },
-  desc: {
+  rating: {
     type: String,
-    required: [true, "Please Enter Your Service Description"],
+    required: [true, "Please Enter Your Rating"],
   },
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
     required: true,
-  },
-  address: {
-    type: String,
   },
   createdAt: {
     type: Date,

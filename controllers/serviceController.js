@@ -1,8 +1,6 @@
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const User = require("../models/userModel");
 const Service = require("../models/serviceModel");
-const sendEmail = require("../utils/sendEmail");
 const cloudinary = require("cloudinary");
 
 // Register a User --> Admin/Seller
@@ -25,8 +23,7 @@ exports.createService = catchAsyncErrors(async (req, res, next) => {
 
   req.body.images = imagesLinks;
   req.body.user = req.user.id;
-  req.body.bname = req.user.bname ? req.user.bname : req.user.role;
-  req.body.address = req.user.address ? req.user.address : "";
+
   delete req.body.public_id;
   delete req.body.url;
 
@@ -78,22 +75,6 @@ exports.getAllServices = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Get all services detail --> Seller
-exports.getAllSellerServices = catchAsyncErrors(async (req, res, next) => {
-  const services = await Service.find({user:req.user.id});
-
-  res.status(200).json({
-    success: true,
-    services,
-  });
-});
-exports.getAllAdminServices = catchAsyncErrors(async (req, res, next) => {
-  const services = await Service.find();
-  res.status(200).json({
-    success: true,
-    services,
-  });
-});
 
 
 // Delete Service --Admin/Seller
@@ -106,9 +87,9 @@ exports.deleteService = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  // const imageId = service.images.public_id;
+  const imageId = service.images.public_id;
 
-  // await cloudinary.v2.uploader.destroy(imageId);
+  await cloudinary.v2.uploader.destroy(imageId);
 
   await service.remove();
 

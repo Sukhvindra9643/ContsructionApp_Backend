@@ -1,14 +1,14 @@
 const mongoose = require("mongoose"); // Erase if already required
 
 // Declare the Schema of the Mongo model
-var categorySchema = new mongoose.Schema({
-  name: {
+var serviceQuerySchema = new mongoose.Schema({
+  servicename: {
     type: String,
     required: true,
   },
-  category: {
-    type: String,
-    required: true,
+  price:{
+    type:Number,
+    required:true
   },
   public_id: {
     type: String,
@@ -18,9 +18,18 @@ var categorySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  price:{
-    type:Number,
+  sellername:{
+    type:String,
     required:true
+  },
+  sellermobile:{
+    type:String,
+    required:true
+  },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -29,4 +38,4 @@ var categorySchema = new mongoose.Schema({
 });
 
 //Export the model
-module.exports = mongoose.model("Category", categorySchema);
+module.exports = mongoose.model("Servicequery", serviceQuerySchema);
