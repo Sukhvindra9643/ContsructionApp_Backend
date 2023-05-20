@@ -8,9 +8,7 @@ const cloudinary = require("cloudinary");
 // Register a User
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   req.body.bname = req.body.bname ? req.body.bname : req.body.name;
-  req.body.mobile = "XXXXXXXXXX";
-  req.body.address = "";
-  req.body.shopInfo = req.body.shopInfo.split(",");
+  req.body.shopInfo = req.body.shopInfo.length > 0 ? req.body.shopInfo.split(","):[];
 
   const user = await User.create(req.body);
 
