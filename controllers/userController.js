@@ -12,11 +12,29 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
 
   const user = await User.create(req.body);
 
-  res.status(200).json({
-    success: true,
-    message: "Registered Successfully",
-    user,
-  });
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  user.otp = otp;
+  await user.save({ validateBeforeSave: false });
+  const message = `username: ${req.body.email} \notp:${otp} \n\nIf you have not requested this email then, please ignore it.\nPlease change your password after login.`;
+
+  try {
+    const result = await sendEmail({
+      email: user.email,
+      subject: `Otp Verification`,
+      message,
+    });
+
+    if (result) {
+      res.status(200).json({
+        success: true,
+        message: "Registered Successfully",
+        user,
+      });
+    }
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+  
 });
 
 // Login User
@@ -41,7 +59,6 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   }
 
   const otp = Math.floor(100000 + Math.random() * 900000);
-  console.log(otp);
   user.otp = otp;
   await user.save({ validateBeforeSave: false });
   const message = `username: ${req.body.email} \notp:${otp} \n\nIf you have not requested this email then, please ignore it.\nPlease change your password after login.`;
