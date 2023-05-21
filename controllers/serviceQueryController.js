@@ -18,7 +18,6 @@ exports.createServiceQuery = catchAsyncErrors(async (req, res, next) => {
   console.log(serviceQuery,user);
   const message = ` service name : ${serviceQuery.servicename} \n user name : ${user.name}\n price : ₹ ${serviceQuery.price}`
       
-  console.log(message);
   try {
     const result = await sendEmail({
       email: user.email,

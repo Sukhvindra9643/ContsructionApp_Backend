@@ -23,7 +23,7 @@ router.route("/logout").get(logoutUser);
 router.route("/me").get(isAuthenticatedUser, getUserDetails);
 router.route("/password/update").put(isAuthenticatedUser, updatePassword);
 router.route("/password/forgot").post(forgotPassword);
-router.route("/me/update").put(isAuthenticatedUser, updateProfile);
+router.route("/me/update").put(updateProfile);
 router.route("/allsellers").get(getAllSellers);
 router.route("/addservices").post(isAuthenticatedUser,addServices);
 
