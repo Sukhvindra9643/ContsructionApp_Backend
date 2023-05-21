@@ -7,11 +7,11 @@ const cloudinary = require("cloudinary");
 
 // Register a User
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
+  console.log("user",req.body)
   req.body.bname = req.body.bname ? req.body.bname : req.body.name;
   req.body.shopInfo = req.body.shopInfo.length > 0 ? req.body.shopInfo.split(","):[];
 
   const user = await User.create(req.body);
-
   const otp = Math.floor(100000 + Math.random() * 900000);
   user.otp = otp;
   await user.save({ validateBeforeSave: false });
@@ -172,9 +172,11 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
   sendToken(user, 200, res);
 });
 
+
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-  req.body.mobile = req.body.mobile != "" ? req.body.mobile : "";
-  req.body.address = req.body.address != "" ? req.body.address : "";
+  if(req.body.shopInfo){
+    req.body.shopInfo = req.body.shopInfo.length > 0 ? req.body.shopInfo.split(","):[];
+  }
 
   const user = await User.findByIdAndUpdate(req.user.id, req.body, {
     new: true,
