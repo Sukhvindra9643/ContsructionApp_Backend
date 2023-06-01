@@ -9,16 +9,8 @@ const serviceSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Please Enter Your Service Price"],
   },
-  images: [
-    {
-      public_id: [{
-        type: String,
-      }],
-      url: [{
-        type: String,
-      }],
-    },
-  ],
+  public_id:[],
+  url:[],
   rating: {
     type: String,
     required: [true, "Please Enter Your Rating"],

@@ -5,29 +5,8 @@ const cloudinary = require("cloudinary");
 
 // Register a User --> Admin/Seller
 exports.createService = catchAsyncErrors(async (req, res, next) => {
-  let public_id = [];
-  let url = [];
 
-  if (req.body.public_id[0] === "" && req.body.url[0] === "") {
-    public_id = ""
-    url = ""
-  }
-  
-  const image = {
-    public_id : req.body.public_id.split(","),
-    url : req.body.url.split(",")
-  }
-
-  const imagesLinks = [];
-  imagesLinks.push(image);
-
-  req.body.images = imagesLinks;
   req.body.user = req.user.id;
-
-  delete req.body.public_id;
-  delete req.body.url;
-
-
   const service = await Service.create(req.body);
 
   res.status(201).json({
@@ -79,8 +58,9 @@ exports.getAllServices = catchAsyncErrors(async (req, res, next) => {
 
 // Delete Service --Admin/Seller
 exports.deleteService = catchAsyncErrors(async (req, res, next) => {
+  console.log(req.params.id)
   const service = await Service.findById(req.params.id);
-
+  console.log(service)
   if (!service) {
     return next(
       new ErrorHandler(`Service does not exist with Id: ${req.params.id}`, 400)

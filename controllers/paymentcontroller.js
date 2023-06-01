@@ -7,19 +7,21 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 exports.processPayment = catchAsyncErrors(async (req, res, next) => {
 
   try{
-    const {name,amount} = req.body;
+    const {name,amount,email} = req.body;
+    console.log(req.body)
     const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount*100),
         currency: 'INR',
         description: name,
         payment_method_types: ['card'],
-        receipt_email: req.user.email,
+        receipt_email: email,
         metadata: {
-          company: "ConstructionApp",
+          company: "JalaunCodingHub",
         },
     });
 
     const clientSecret = paymentIntent.client_secret;
+    console.log(clientSecret)
     res.json({message: "Payment Successful", clientSecret});
 
   }catch(err){
@@ -29,32 +31,32 @@ exports.processPayment = catchAsyncErrors(async (req, res, next) => {
 });
 
 exports.paymentVerify = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
+  // const user = await User.findById(req.user.id);
 
-  const sig = req.headers['stripe-signature'];
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  }
-  catch (err) {
-    return res.status(400).send({message:err.message});
-  }
+  // const sig = req.headers['stripe-signature'];
+  // let event;
+  // try {
+  //   event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  // }
+  // catch (err) {
+  //   return res.status(400).send({message:err.message});
+  // }
 
-  if(event.type === 'payment_intent.created'){
-    const paymentIntent = event.data.object;
-    console.log('PaymentIntent was created!');
-    console.log(paymentIntent);
-    // Then define and call a method to handle the successful payment intent.
-    // handlePaymentIntentSucceeded(paymentIntent);
-  }
-  if (event.type === 'payment_intent.succeeded') {
-    const paymentIntent = event.data.object;
-    user.wallet = user.wallet + paymentIntent.amount/100;
-    await user.save();
-    console.log('PaymentIntent was successful!');
-    console.log(paymentIntent);
-    // Then define and call a method to handle the successful payment intent.
-    // handlePaymentIntentSucceeded(paymentIntent);
-  }
-  res.json({received: true})
+  // if(event.type === 'payment_intent.created'){
+  //   const paymentIntent = event.data.object;
+  //   console.log('PaymentIntent was created!');
+  //   console.log(paymentIntent);
+  //   // Then define and call a method to handle the successful payment intent.
+  //   // handlePaymentIntentSucceeded(paymentIntent);
+  // }
+  // if (event.type === 'payment_intent.succeeded') {
+  //   const paymentIntent = event.data.object;
+  //   user.wallet = user.wallet + paymentIntent.amount/100;
+  //   await user.save();
+  //   console.log('PaymentIntent was successful!');
+  //   console.log(paymentIntent);
+  //   // Then define and call a method to handle the successful payment intent.
+  //   // handlePaymentIntentSucceeded(paymentIntent);
+  // }
+  // res.json({received: true})
 });

@@ -16,7 +16,6 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
 
   const contact = req.body.mobile.substring(0, 5) + "XXXXX";
 
-
   const message = `<!DOCTYPE html>
   <html lang="en">
     <head>
@@ -37,7 +36,7 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
         </div>
       </main>
     </body>
-  </html>`
+  </html>`;
 
   try {
     const result = await sendEmail({
@@ -74,10 +73,9 @@ exports.getMyQueries = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Update service --> admin/seller
-exports.updateQuery = catchAsyncErrors(async (req, res, next) => {
-  const { id } = req.params;
-
-  const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
+exports.updateMyQuery = catchAsyncErrors(async (req, res, next) => {
+  req.body.materials = req.body.materials.split(",");
+  const query = await Query.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
     useFindAndModify: false,
@@ -85,24 +83,21 @@ exports.updateQuery = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    category,
+    query,
   });
 });
 
 // Delete Service --Admin/Seller
-exports.deleteQuery = catchAsyncErrors(async (req, res, next) => {
-  const category = await Category.findById(req.params.id);
+exports.deleteMyQuery = catchAsyncErrors(async (req, res, next) => {
+  const query = await Query.findById(req.params.id);
 
-  if (!category) {
+  if (!query) {
     return next(
-      new ErrorHandler(`Category does not exist with Id: ${req.params.id}`, 400)
+      new ErrorHandler(`Query does not exist with Id: ${req.params.id}`, 400)
     );
   }
-  const imageId = category.public_id;
 
-  await cloudinary.v2.uploader.destroy(imageId);
-
-  await category.remove();
+  await query.remove();
 
   res.status(200).json({
     success: true,
