@@ -58,6 +58,7 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
 //Get service Details --> Admin/Seller
 exports.getAllQueries = catchAsyncErrors(async (req, res, next) => {
   const queries = await Query.find().sort({"createdAt":-1});
+  console.log("allqueries", queries)
   res.status(200).json({
     success: true,
     queries,

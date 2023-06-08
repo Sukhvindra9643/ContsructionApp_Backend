@@ -199,7 +199,7 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
 // Get all users detail --> Admin
 exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find();
-
+  console.log("users",users);
   res.status(200).json({
     success: true,
     users,

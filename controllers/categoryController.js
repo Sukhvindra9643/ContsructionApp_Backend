@@ -16,6 +16,7 @@ exports.createCategory = catchAsyncErrors(async (req, res, next) => {
 //Get service Details --> Admin/Seller
 exports.getAllCategories = catchAsyncErrors(async (req, res, next) => {
   const categories = await Category.find();
+  console.log("categories");
   res.status(200).json({
     success: true,
     categories,
