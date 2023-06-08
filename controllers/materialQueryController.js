@@ -57,14 +57,14 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
 
 //Get service Details --> Admin/Seller
 exports.getAllQueries = catchAsyncErrors(async (req, res, next) => {
-  const queries = await Query.find();
+  const queries = await Query.find().sort({"createdAt":-1});
   res.status(200).json({
     success: true,
     queries,
   });
 });
 exports.getMyQueries = catchAsyncErrors(async (req, res, next) => {
-  const myqueries = await Query.find({ user: req.user.id });
+  const myqueries = await Query.find({ user: req.user.id }).sort({"createdAt":-1});
 
   res.status(200).json({
     success: true,

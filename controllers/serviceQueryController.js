@@ -38,14 +38,14 @@ exports.createServiceQuery = catchAsyncErrors(async (req, res, next) => {
 
 //Get service Details --> Admin/Seller
 exports.getMyServiceQuery = catchAsyncErrors(async (req, res, next) => {
-  const serviceQueries = await ServiceQuery.find({user:req.user.id})
+  const serviceQueries = await ServiceQuery.find({user:req.user.id}).sort({"createdAt":-1});
   res.status(200).json({
     success: true,
     serviceQueries,
   });
 })
 exports.getSellerServiceQuery = catchAsyncErrors(async (req, res, next) => {
-  const serviceQueries = await ServiceQuery.find({sellername:req.user.name}).populate("user");
+  const serviceQueries = await ServiceQuery.find({sellername:req.user.name}).populate("user").sort({"createdAt":-1});
   res.status(200).json({
     success: true,
     serviceQueries,

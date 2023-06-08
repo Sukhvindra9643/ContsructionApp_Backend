@@ -18,14 +18,14 @@ exports.CreateContact = catchAsyncErrors(async (req, res, next) => {
 
 //Get service Details --> Admin/Seller
 exports.getAllContact = catchAsyncErrors(async (req, res, next) => {
-  const contacts = await Contact.find();
+  const contacts = await Contact.find().sort({"createdAt":-1});
   res.status(200).json({
     success: true,
     contacts,
   });
 });
 exports.getMyContact = catchAsyncErrors(async (req, res, next) => {
-  const mycontact = await Contact.find({user:req.user.id});
+  const mycontact = await Contact.find({user:req.user.id}).sort({"createdAt":-1});
   
   res.status(200).json({
     success: true,
