@@ -178,12 +178,18 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
     req.body.shopInfo = req.body.shopInfo.length > 0 ? req.body.shopInfo.split(","):[];
   }
 
+  req.body.avatar = {
+    public_id: req.body.public_id,
+    url: req.body.url,
+  }
+  delete req.body.public_id;
+  delete req.body.url;
+
   const user = await User.findByIdAndUpdate(req.user.id, req.body, {
     new: true,
     runValidators: true,
     useFindAndModify: false,
   });
-
   res.status(200).json({
     success: true,
     user,

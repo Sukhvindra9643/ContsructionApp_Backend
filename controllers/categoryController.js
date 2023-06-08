@@ -56,10 +56,10 @@ exports.deleteCategory = catchAsyncErrors(async (req, res, next) => {
   }
   const imageId = category.public_id;
   
-  await cloudinary.v2.uploader.destroy(imageId);
+  // await cloudinary.v2.uploader.destroy(imageId);
   
   await category.remove();
-
+  
   res.status(200).json({
     success: true,
   });
