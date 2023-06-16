@@ -16,6 +16,10 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload());
 
+app.get("/",(req,res)=>{
+    res.sendFile("index.html",{root: __dirname});
+})
+
 // Route imports
 const user = require("./routes/userRoute");
 const service = require("./routes/serviceRoute");
@@ -31,6 +35,7 @@ app.use("/api/v1",payment);
 app.use("/api/v1",materialQuery);
 app.use("/api/v1",materialContact);
 app.use("/api/v1",ServiceQuery);
+
 
 // Middleware for error
 app.use(errorMiddleware);
