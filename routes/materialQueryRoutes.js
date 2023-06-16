@@ -5,7 +5,7 @@ const {CreateQuery, getAllQueries,getMyQueries,deleteMyQuery,updateMyQuery} = re
 
 
 router.route("/createquery").post(isAuthenticatedUser,CreateQuery);
-router.route("/getAllQueries").get(isAuthenticatedUser,getAllQueries);
+router.route("/getAllQueries").get(getAllQueries);
 router.route("/myqueries").get(isAuthenticatedUser,getMyQueries)
 router.route("/deleteMaterialQuery/:id").delete(deleteMyQuery)
 router.route("/updateMaterialQuery/:id").put(updateMyQuery)

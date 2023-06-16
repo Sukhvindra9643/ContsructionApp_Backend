@@ -1,14 +1,10 @@
-const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const User = require("../models/userModel");
-const sendEmail = require("../utils/sendEmail");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // Register a User
 exports.processPayment = catchAsyncErrors(async (req, res, next) => {
 
   try{
     const {name,amount,email} = req.body;
-    console.log(req.body)
     const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount*100),
         currency: 'INR',
@@ -16,16 +12,15 @@ exports.processPayment = catchAsyncErrors(async (req, res, next) => {
         payment_method_types: ['card'],
         receipt_email: email,
         metadata: {
-          company: "JalaunCodingHub",
+          company: "Contruction Bazaar",
         },
     });
 
     const clientSecret = paymentIntent.client_secret;
-    console.log(clientSecret)
     res.json({message: "Payment Successful", clientSecret});
 
   }catch(err){
-    console.log(err);
+    console.log(err); 
     res.status(500).json({success: false, message: "Internal Server Error"});
   }
 });

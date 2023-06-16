@@ -5,6 +5,7 @@ const Category = require("../models/categoryModel");
 
 // Create new category --> Admin/Seller
 exports.createCategory = catchAsyncErrors(async (req, res, next) => {
+  
   const category = await Category.create(req.body);
 
   res.status(201).json({
@@ -16,7 +17,6 @@ exports.createCategory = catchAsyncErrors(async (req, res, next) => {
 //Get service Details --> Admin/Seller
 exports.getAllCategories = catchAsyncErrors(async (req, res, next) => {
   const categories = await Category.find();
-  console.log("categories");
   res.status(200).json({
     success: true,
     categories,
@@ -32,7 +32,6 @@ exports.getCategories = catchAsyncErrors(async (req, res, next) => {
 
 // Update service --> admin/seller
 exports.updateCategory = catchAsyncErrors(async (req, res, next) => {
-  const {id} = req.params;
 
   const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
     new: true,

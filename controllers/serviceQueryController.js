@@ -2,20 +2,28 @@ const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const ServiceQuery = require("../models/serviceQueryModel");
 const sendEmail = require("../utils/sendEmail");
 const User = require("../models/userModel");
+
+
 // Create new category --> Admin/Seller
 exports.createServiceQuery = catchAsyncErrors(async (req, res, next) => {
+  req.body.ratings = {totalratings:req.body.totalratings,noofusers:req.body.noofuser};
+  delete req.body.totalratings;
+  delete req.body.noofusers;
+
   const serviceQuery = await ServiceQuery.create({
     servicename: req.body.servicename,
     price: parseInt(req.body.price),
     public_id: req.body.public_id,
     url: req.body.url,
+    sellerId:req.body.sellerId,
     sellername: req.body.sellername,
     sellermobile: req.body.sellermobile,
+    sellerratings: req.body.ratings,
     user: req.body.user,
   });
 
   const user = await User.findById(req.body.user);
-  console.log(serviceQuery,user);
+
   const message = ` service name : ${serviceQuery.servicename} \n user name : ${user.name}\n price : ₹ ${serviceQuery.price}`
       
   try {
@@ -38,7 +46,7 @@ exports.createServiceQuery = catchAsyncErrors(async (req, res, next) => {
 
 //Get service Details --> Admin/Seller
 exports.getMyServiceQuery = catchAsyncErrors(async (req, res, next) => {
-  const serviceQueries = await ServiceQuery.find({user:req.user.id}).sort({"createdAt":-1});
+  const serviceQueries = await ServiceQuery.find({user:req.user.id}).sort({"createdAt":-1})
   res.status(200).json({
     success: true,
     serviceQueries,

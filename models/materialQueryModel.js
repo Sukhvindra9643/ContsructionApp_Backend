@@ -17,7 +17,11 @@ const materialQuerySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  locality:{
+  locality: {
+    type: String,
+    required: true,
+  },
+  unit: {
     type: String,
     required: true,
   },
@@ -29,7 +33,9 @@ const materialQuerySchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now,
+  },
+  expireAt: {
+    type: Date,
   },
 });
 

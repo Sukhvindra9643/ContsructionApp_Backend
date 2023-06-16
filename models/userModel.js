@@ -46,6 +46,14 @@ const userSchema = new mongoose.Schema({
   address: {
     type: String
   },
+  ratings:{
+    totalratings:{
+      type:Number,
+    },
+    noofuser:{
+      type:Number,
+    }
+  },
   role: {
     type: String,
     required: true,

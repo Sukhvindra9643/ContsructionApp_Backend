@@ -21,6 +21,10 @@ const materialContactSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  unit:{
+    type: String,
+    required: true,
+  },
   charge:{
     type:Number,
     required:true

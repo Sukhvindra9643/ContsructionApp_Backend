@@ -19,7 +19,6 @@ exports.CreateContact = catchAsyncErrors(async (req, res, next) => {
 //Get service Details --> Admin/Seller
 exports.getAllContact = catchAsyncErrors(async (req, res, next) => {
   const contacts = await Contact.find().sort({"createdAt":-1});
-  console.log("allcontact",contacts);
   res.status(200).json({
     success: true,
     contacts,

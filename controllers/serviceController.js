@@ -58,9 +58,7 @@ exports.getAllServices = catchAsyncErrors(async (req, res, next) => {
 
 // Delete Service --Admin/Seller
 exports.deleteService = catchAsyncErrors(async (req, res, next) => {
-  console.log(req.params.id)
   const service = await Service.findById(req.params.id);
-  console.log(service)
   if (!service) {
     return next(
       new ErrorHandler(`Service does not exist with Id: ${req.params.id}`, 400)

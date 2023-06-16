@@ -9,14 +9,21 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
   req.body.name = req.user.name;
   req.body.user = req.user.id;
   req.body.materials = req.body.materials.split(",");
-  const query = await Query.create(req.body);
-
+  req.body.createdAt = new Date().getTime();
+  req.body.expireAt = new Date().getTime() + 1000 * 60 * 60 * 24 * 30;
+  let query;
+  let message;
+  try {
+    query = await Query.create(req.body);
+  } catch (error) {
+    console.log(error);
+  } 
   const users = await User.find({ role: ["admin", "seller"] });
   const emails = users.map((user) => user.email);
 
-  const contact = req.body.mobile.substring(0, 5) + "XXXXX";
-
-  const message = `<!DOCTYPE html>
+  try {
+    const contact = req.body.mobile.substring(0, 5) + "XXXXX";
+    message = `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8">
@@ -26,17 +33,20 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
     <body style="display: flex; align-items:center; justify-content:center;width:100vw;height:auto">
       <main style="display: flex; align-items:center; justify-content:center; backgroud-color:green">
         <div style="background-color: white;padding: 20px;box-shadow: 2px 2px 2px 2px gray;">
-          <p style="margin:0px;font-size:20px">${query.name}</p>
+          <p style="margin:0px;font-size:20px">Buyer Name : ${query.name}</p>
           <p style="margin:0px;font-size:20px">Budget : ₹ ${query.budget}</p>
-          <p style="margin:0px;font-size:20px">Area : ${query.area}/sqft</p>
           <p style="margin:0px;font-size:20px">Contact no. : ${contact}</p>
+          <p style="margin:0px;font-size:20px">Locality : ${query.locality}</p>
           <p style="margin:0px;font-size:20px">CreatedAt : ${query.createdAt}</p>
-          <p style="margin:0px;font-size:20px">No. of materials : ${query.materials.length}</p>
+          <p style="margin:0px;font-size:20px">Materials : ${query.materials[0]}</p>
           <hr>
         </div>
       </main>
     </body>
   </html>`;
+  } catch (error) {
+    console.log(error);
+  }
 
   try {
     const result = await sendEmail({
@@ -57,16 +67,23 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
 
 //Get service Details --> Admin/Seller
 exports.getAllQueries = catchAsyncErrors(async (req, res, next) => {
-  const queries = await Query.find().sort({"createdAt":-1});
-  console.log("allqueries", queries)
+  const queries = await Query.find().sort({ createdAt: -1 });
+
+  queries.filter((query) => {
+    if (query.expireAt < new Date().getTime()) {
+      query.remove();
+    }
+  });
+
   res.status(200).json({
     success: true,
     queries,
   });
 });
 exports.getMyQueries = catchAsyncErrors(async (req, res, next) => {
-  const myqueries = await Query.find({ user: req.user.id }).sort({"createdAt":-1});
-
+  const myqueries = await Query.find({ user: req.user.id }).sort({
+    createdAt: -1,
+  });
   res.status(200).json({
     success: true,
     myqueries,

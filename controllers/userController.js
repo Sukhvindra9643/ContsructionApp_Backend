@@ -7,9 +7,14 @@ const cloudinary = require("cloudinary");
 
 // Register a User
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
-  console.log("user",req.body)
   req.body.bname = req.body.bname ? req.body.bname : req.body.name;
   req.body.shopInfo = req.body.shopInfo.length > 0 ? req.body.shopInfo.split(","):[];
+  req.body.ratings = {
+    totalratings : parseInt(req.body.totalratings),
+    noofuser: parseInt(req.body.noofuser)
+  }
+  delete req.body.totalratings;
+  delete req.body.noofuser;
 
   const user = await User.create(req.body);
   const otp = Math.floor(100000 + Math.random() * 900000);
@@ -112,7 +117,6 @@ exports.logoutUser = catchAsyncErrors(async (req, res, next) => {
 // Forgot Password
 exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
-  console.log(user)
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
@@ -161,7 +165,6 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
   const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
 
   if (!isPasswordMatched) {
-    console.log(isPasswordMatched);
     return next(new ErrorHandler("Old password is incorrect", 400));
   }
 
@@ -173,11 +176,35 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 
-exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-  if(req.body.shopInfo){
-    req.body.shopInfo = req.body.shopInfo.length > 0 ? req.body.shopInfo.split(","):[];
-  }
+exports.updateShopInfo = catchAsyncErrors(async (req, res, next) => {
+  req.body.shopInfo = req.body.shopInfo.split(",");
+  const user = await User.findByIdAndUpdate(req.user.id, req.body, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
 
+exports.updateRatings = catchAsyncErrors(async (req, res, next) => {
+  const {rating,id} = req.body;
+
+  const user = await User.findById(id);
+  user.ratings.totalratings = user.ratings.totalratings + parseInt(rating);
+  user.ratings.noofuser = user.ratings.noofuser + 1;
+
+  await user.save();
+  
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
   req.body.avatar = {
     public_id: req.body.public_id,
     url: req.body.url,
@@ -199,15 +226,14 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
 // Get all users detail --> Admin
 exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find();
-  console.log("users",users);
   res.status(200).json({
     success: true,
     users,
   });
 });
 exports.getAllSellers = catchAsyncErrors(async (req, res, next) => {
-  const { shopInfo } = req.query;
-  const sellers = await User.find({ shopInfo: shopInfo });
+  const { shopInfo,sort } = req.query;
+  const sellers = await User.find({ shopInfo: shopInfo }).sort({ ratings: parseInt(sort) });
 
   res.status(200).json({
     success: true,
@@ -239,15 +265,7 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
 
 exports.addServices = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user.id);
-  let add = user.shopInfo;
-
-  for (let i = 0; i < req.body.length; i++) {
-    if (user.shopInfo[i] !== req.body[i].value) {
-      add.push(req.body[i].value);
-    }
-  }
-
-  user.shopInfo = add;
+  user.shopInfo = req.body;
   await user.save();
 
   res.status(200).json({

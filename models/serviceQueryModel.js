@@ -22,6 +22,10 @@ var serviceQuerySchema = new mongoose.Schema({
     type:String,
     required:true
   },
+  sellerratings:{
+    type:Object,
+    required:true
+  },
   sellermobile:{
     type:String,
     required:true
@@ -29,6 +33,10 @@ var serviceQuerySchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
+    required: true,
+  },
+  sellerId:{
+    type: String,
     required: true,
   },
   createdAt: {
