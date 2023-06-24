@@ -35,6 +35,10 @@ const materialContactSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  queryId:{
+    type: String,
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

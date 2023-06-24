@@ -22,6 +22,9 @@ var categorySchema = new mongoose.Schema({
     type:Number,
     required:true
   },
+  hourlyPrice:{
+    type:Number,
+  },
   unit:{
     type:String,
     required:true

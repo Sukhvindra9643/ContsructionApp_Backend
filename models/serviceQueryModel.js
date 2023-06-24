@@ -10,6 +10,10 @@ var serviceQuerySchema = new mongoose.Schema({
     type:Number,
     required:true
   },
+  hourlyPrice:{
+    type:Number,
+    required:true
+  },
   public_id: {
     type: String,
     required: true,

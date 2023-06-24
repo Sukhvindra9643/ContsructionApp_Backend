@@ -9,18 +9,24 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
   req.body.name = req.user.name;
   req.body.user = req.user.id;
   req.body.materials = req.body.materials.split(",");
-  req.body.createdAt = new Date().getTime();
+  req.body.createdAt = new Date()
   req.body.expireAt = new Date().getTime() + 1000 * 60 * 60 * 24 * 30;
+
+
+  let createdat = new Date().toLocaleString().split(",")[0]+""+
+    new Date().toLocaleString().split(",")[1];
   let query;
   let message;
+
+
   try {
     query = await Query.create(req.body);
   } catch (error) {
     console.log(error);
-  } 
+  }
   const users = await User.find({ role: ["admin", "seller"] });
   const emails = users.map((user) => user.email);
-
+  let locality = query.locality.split(",").splice(2)
   try {
     const contact = req.body.mobile.substring(0, 5) + "XXXXX";
     message = `<!DOCTYPE html>
@@ -36,8 +42,8 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
           <p style="margin:0px;font-size:20px">Buyer Name : ${query.name}</p>
           <p style="margin:0px;font-size:20px">Budget : ₹ ${query.budget}</p>
           <p style="margin:0px;font-size:20px">Contact no. : ${contact}</p>
-          <p style="margin:0px;font-size:20px">Locality : ${query.locality}</p>
-          <p style="margin:0px;font-size:20px">CreatedAt : ${query.createdAt}</p>
+          <p style="margin:0px;font-size:20px">Locality : ${locality}</p>
+          <p style="margin:0px;font-size:20px">CreatedAt : ${createdat}</p>
           <p style="margin:0px;font-size:20px">Materials : ${query.materials[0]}</p>
           <hr>
         </div>
@@ -48,21 +54,23 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
     console.log(error);
   }
 
-  try {
-    const result = await sendEmail({
-      email: emails,
-      subject: `New Construction Query Created Check Now`,
-      message,
-      type: "html",
-    });
-  } catch (error) {
-    query.remove();
-    return next(new ErrorHandler(error.message, 500));
-  }
   res.status(201).json({
     success: true,
     query,
   });
+  for (let i = 0; i < emails.length; i++) {
+    try {
+      const result = await sendEmail({
+        email: emails[i],
+        subject: `New Construction Query Created Check Now`,
+        message,
+        type: "html",
+      });
+    } catch (error) {
+      query.remove();
+      // return next(new ErrorHandler(error.message, 500));
+    }
+  }
 });
 
 //Get service Details --> Admin/Seller

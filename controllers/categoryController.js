@@ -1,11 +1,9 @@
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const cloudinary = require("cloudinary");
 const Category = require("../models/categoryModel");
 
 // Create new category --> Admin/Seller
 exports.createCategory = catchAsyncErrors(async (req, res, next) => {
-  
   const category = await Category.create(req.body);
 
   res.status(201).json({
