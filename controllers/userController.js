@@ -233,8 +233,9 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
 });
 exports.getAllSellers = catchAsyncErrors(async (req, res, next) => {
   const { shopInfo,sort } = req.query;
+  console.log(shopInfo,sort)
   const sellers = await User.find({ shopInfo: shopInfo }).sort({ ratings: parseInt(sort) });
-
+  console.log(sellers)
   res.status(200).json({
     success: true,
     sellers,

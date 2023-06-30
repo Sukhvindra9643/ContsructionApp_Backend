@@ -30,7 +30,6 @@ exports.getCategories = catchAsyncErrors(async (req, res, next) => {
 
 // Update service --> admin/seller
 exports.updateCategory = catchAsyncErrors(async (req, res, next) => {
-
   const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,

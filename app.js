@@ -35,6 +35,8 @@ app.use("/api/v1",payment);
 app.use("/api/v1",materialQuery);
 app.use("/api/v1",materialContact);
 app.use("/api/v1",ServiceQuery);
+app.use("/api/v1",require("./routes/queryServiceRoute"));
+app.use("/api/v1",require("./routes/myQueryServiceRoute"));
 
 
 // Middleware for error

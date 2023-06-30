@@ -5,16 +5,12 @@ const serviceSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please Enter Your Service Name"],
   },
-  price: {
-    type: Number,
-    required: [true, "Please Enter Your Service Price"],
+  unit: {
+    type: String,
+    required: [true, "Please Enter Your Service Unit"],
   },
   public_id:[],
   url:[],
-  rating: {
-    type: String,
-    required: [true, "Please Enter Your Rating"],
-  },
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",

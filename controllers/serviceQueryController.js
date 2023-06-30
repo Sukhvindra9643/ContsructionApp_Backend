@@ -13,6 +13,7 @@ exports.createServiceQuery = catchAsyncErrors(async (req, res, next) => {
   const serviceQuery = await ServiceQuery.create({
     servicename: req.body.servicename,
     price: parseInt(req.body.price),
+    hourlyPrice: parseInt(req.body.hourlyPrice),
     public_id: req.body.public_id,
     url: req.body.url,
     sellerId:req.body.sellerId,

@@ -27,7 +27,6 @@ var categorySchema = new mongoose.Schema({
   },
   unit:{
     type:String,
-    required:true
   },
   createdAt: {
     type: Date,
