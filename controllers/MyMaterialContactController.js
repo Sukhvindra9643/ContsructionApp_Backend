@@ -1,5 +1,5 @@
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const Contact = require("../models/myMaterialContactModel");
+const Contact = require("../models/MyMaterialContactModel");
 
 // Create new category --> Admin/Seller
 exports.CreateContact = catchAsyncErrors(async (req, res, next) => {

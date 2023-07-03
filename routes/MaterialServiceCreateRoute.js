@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const {createCategory,getAllCategories,deleteCategory,updateCategory,getCategories} = require("../controllers/categoryController.js");
-const { isAuthenticatedUser} = require("../middleware/auth");
+const {createCategory,getAllCategories,deleteCategory,updateCategory,getCategories} = require("../controllers/MaterialServiceCreateController.js");
+const { isAuthenticatedUser} = require("../middleware/auth.js");
 
 router.route("/createCategory").post(isAuthenticatedUser,createCategory);
 router.route("/getAllCategories").get(getAllCategories);

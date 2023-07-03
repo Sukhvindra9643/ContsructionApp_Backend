@@ -1,11 +1,10 @@
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const Service = require("../models/serviceModel");
+const Service = require("../models/OtherServiceCreateModel");
 const cloudinary = require("cloudinary");
 
 // Register a User --> Admin/Seller
 exports.createService = catchAsyncErrors(async (req, res, next) => {
-
   req.body.user = req.user.id;
   const service = await Service.create(req.body);
 
@@ -65,7 +64,7 @@ exports.deleteService = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
-  const imageId = service.images.public_id;
+  const imageId = service.public_id[0];
 
   await cloudinary.v2.uploader.destroy(imageId);
 

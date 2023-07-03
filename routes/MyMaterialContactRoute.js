@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { isAuthenticatedUser} = require("../middleware/auth");
-const {CreateContact, getAllContact,getMyContact} = require("../controllers/MaterialContactController");
+const {CreateContact, getAllContact,getMyContact} = require("../controllers/MyMaterialContactController");
 
 
 router.route("/createcontact").post(isAuthenticatedUser,CreateContact);

@@ -1,6 +1,6 @@
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const Category = require("../models/categoryModel");
+const Category = require("../models/MaterialServiceCreateModel");
 
 // Create new category --> Admin/Seller
 exports.createCategory = catchAsyncErrors(async (req, res, next) => {

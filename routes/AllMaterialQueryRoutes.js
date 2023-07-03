@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { isAuthenticatedUser} = require("../middleware/auth");
-const {CreateQuery, getAllQueries,getMyQueries,deleteMyQuery,updateMyQuery} = require("../controllers/materialQueryController");
+const {CreateQuery, getAllQueries,getMyQueries,deleteMyQuery,updateMyQuery} = require("../controllers/AllMaterialQueryController");
 
 
 router.route("/createquery").post(isAuthenticatedUser,CreateQuery);

@@ -1,6 +1,6 @@
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const User = require("../models/userModel");
+const User = require("../models/UserModel");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const cloudinary = require("cloudinary");
@@ -233,9 +233,7 @@ exports.getAllUsers = catchAsyncErrors(async (req, res, next) => {
 });
 exports.getAllSellers = catchAsyncErrors(async (req, res, next) => {
   const { shopInfo,sort } = req.query;
-  console.log(shopInfo,sort)
   const sellers = await User.find({ shopInfo: shopInfo }).sort({ ratings: parseInt(sort) });
-  console.log(sellers)
   res.status(200).json({
     success: true,
     sellers,

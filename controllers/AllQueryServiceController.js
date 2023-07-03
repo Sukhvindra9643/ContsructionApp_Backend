@@ -1,8 +1,8 @@
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const Query = require("../models/queryServiceModal");
+const Query = require("../models/AllQueryServiceModal");
 const sendEmail = require("../utils/sendEmail");
-const User = require("../models/userModel");
+const User = require("../models/UserModel");
 
 // Create new category --> Admin/Seller
 exports.CreateQueryService = catchAsyncErrors(async (req, res, next) => {
@@ -11,7 +11,6 @@ exports.CreateQueryService = catchAsyncErrors(async (req, res, next) => {
   req.body.budget = parseInt(req.body.budget);
   req.body.createdAt = new Date();
   req.body.expireAt = new Date().getTime() + 1000 * 60 * 60 * 24 * 30;
-  console.log(req.body);
 
   let createdat =
     new Date().toLocaleString().split(",")[0] +
@@ -59,19 +58,18 @@ exports.CreateQueryService = catchAsyncErrors(async (req, res, next) => {
     success: true,
     query,
   });
-//   for (let i = 0; i < emails.length; i++) {
-//     try {
-//       const result = await sendEmail({
-//         email: emails[i],
-//         subject: `New Construction Query Created Check Now`,
-//         message,
-//         type: "html",
-//       });
-//     } catch (error) {
-//       query.remove();
-//       // return next(new ErrorHandler(error.message, 500));
-//     }
-//   }
+  for (let i = 0; i < emails.length; i++) {
+    try {
+      const result = await sendEmail({
+        email: emails[i],
+        subject: `New Construction Query Created Check Now`,
+        message,
+        type: "html",
+      });
+    } catch (error) {
+      query.remove();
+    }
+  }
 });
 
 //Get service Details --> Admin/Seller

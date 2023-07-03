@@ -1,6 +1,6 @@
 const express = require("express");
 const { isAuthenticatedUser, authorizeRoles} = require("../middleware/auth");
-const {createService,getAllServices,getServiceDetails, deleteService, updateService} = require("../controllers/serviceController");
+const {createService,getAllServices,getServiceDetails, deleteService, updateService} = require("../controllers/OtherServiceCreateController");
 const router = express.Router();
 
 // User routes

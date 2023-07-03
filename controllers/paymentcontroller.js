@@ -20,7 +20,6 @@ exports.processPayment = catchAsyncErrors(async (req, res, next) => {
     res.json({message: "Payment Successful", clientSecret});
 
   }catch(err){
-    console.log(err); 
     res.status(500).json({success: false, message: "Internal Server Error"});
   }
 });

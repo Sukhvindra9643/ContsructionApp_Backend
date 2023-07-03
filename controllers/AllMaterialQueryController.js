@@ -1,8 +1,8 @@
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const Query = require("../models/materialQueryModel");
+const Query = require("../models/AllMaterialQueryModel");
 const sendEmail = require("../utils/sendEmail");
-const User = require("../models/userModel");
+const User = require("../models/UserModel");
 
 // Create new category --> Admin/Seller
 exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
@@ -41,6 +41,7 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
         <div style="background-color: white;padding: 20px;box-shadow: 2px 2px 2px 2px gray;">
           <p style="margin:0px;font-size:20px">Buyer Name : ${query.name}</p>
           <p style="margin:0px;font-size:20px">Budget : ₹ ${query.budget}</p>
+          <p style="margin:0px;font-size:20px">Quantity : ${query.area}</p>
           <p style="margin:0px;font-size:20px">Contact no. : ${contact}</p>
           <p style="margin:0px;font-size:20px">Locality : ${locality}</p>
           <p style="margin:0px;font-size:20px">CreatedAt : ${createdat}</p>
@@ -68,7 +69,6 @@ exports.CreateQuery = catchAsyncErrors(async (req, res, next) => {
       });
     } catch (error) {
       query.remove();
-      // return next(new ErrorHandler(error.message, 500));
     }
   }
 });

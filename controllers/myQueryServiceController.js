@@ -1,5 +1,5 @@
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const Service = require("../models/myQueryService");
+const Service = require("../models/MyQueryService");
 
 // Create new category --> Admin/Seller
 exports.CreateQueryService = catchAsyncErrors(async (req, res, next) => {

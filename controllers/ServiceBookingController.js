@@ -1,7 +1,7 @@
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
-const ServiceQuery = require("../models/serviceQueryModel");
+const ServiceQuery = require("../models/ServiceBookingModel");
 const sendEmail = require("../utils/sendEmail");
-const User = require("../models/userModel");
+const User = require("../models/UserModel");
 
 
 // Create new category --> Admin/Seller

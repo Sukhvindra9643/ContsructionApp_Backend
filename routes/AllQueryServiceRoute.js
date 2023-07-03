@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { isAuthenticatedUser} = require("../middleware/auth");
-const {CreateQueryService, getAllQueryServices,getMyQueryServices,deleteMyQueryService,updateMyQueryService} = require("../controllers/queryServiceController");
+const {CreateQueryService, getAllQueryServices,getMyQueryServices,deleteMyQueryService,updateMyQueryService} = require("../controllers/AllQueryServiceController");
 
 
 router.route("/createqueryservice").post(isAuthenticatedUser,CreateQueryService);

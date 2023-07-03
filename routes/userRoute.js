@@ -15,7 +15,7 @@ const {
   Verify,
   updateShopInfo,
   updateRatings,
-} = require("../controllers/userController");
+} = require("../controllers/UserController");
 const router = express.Router();
 
 router.route("/register").post(registerUser);
