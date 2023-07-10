@@ -5,10 +5,12 @@ exports.processPayment = catchAsyncErrors(async (req, res, next) => {
 
   try{
     const {name,amount,email} = req.body;
+    const desc = `Payment of Rs.${amount} for ${name} by ${email}`
     const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount*100),
         currency: 'INR',
-        description: name,
+        description: desc,
+        // customer: name,
         payment_method_types: ['card'],
         receipt_email: email,
         metadata: {
