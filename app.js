@@ -19,6 +19,18 @@ app.use(fileUpload());
 app.get("/",(req,res)=>{
     res.sendFile("index.html",{root: __dirname});
 })
+app.get("/refundpolicy",(req,res)=>{
+    res.sendFile("refund_policy.html",{root: __dirname});
+})
+app.get("/privacypolicy",(req,res)=>{
+    res.sendFile("privacy_policy.html",{root: __dirname});
+})
+app.get("/customersupport",(req,res)=>{
+    res.sendFile("customersupport.html",{root: __dirname});
+})
+app.get("/termsofservices",(req,res)=>{
+    res.sendFile("termsofservices.html",{root: __dirname});
+})
 
 // Route imports
 const user = require("./routes/UserRoute");
