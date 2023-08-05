@@ -68,11 +68,9 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
   const message = `username: ${req.body.email} \notp:${otp} \n\nIf you have not requested this email then, please ignore it.\nPlease change your password after login.`;
 
-  if(email === "sukhvindrasingh9670@gmail.com"){
-    console.log("if",email)
+  if(email === "guest9670@gmail.com"){
     sendToken(user, 200, res);
   }else{
-    console.log("else",email)
     try {
     const result = await sendEmail({
       email: user.email,
@@ -249,16 +247,19 @@ exports.getAllSellers = catchAsyncErrors(async (req, res, next) => {
 // Delete User --Admin
 exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.params.id);
-
+  console.log("user", user)
   if (!user) {
     return next(
       new ErrorHandler(`User does not exist with Id: ${req.params.id}`, 400)
     );
   }
 
-  const imageId = user.avatar.public_id;
+  if(user.avatar.public_id !== "none" || user.avatar.url !== ""){
+    const imageId = user.avatar.public_id;
 
-  await cloudinary.v2.uploader.destroy(imageId);
+    await cloudinary.v2.uploader.destroy(imageId);
+  }
+ 
 
   await user.remove();
 
